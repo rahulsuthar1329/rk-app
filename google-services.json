@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "752051266101",
+    "project_id": "geniecart",
+    "storage_bucket": "geniecart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752051266101:android:b4aa23c723b8ace436077c",
+        "android_client_info": {
+          "package_name": "com.rkenterprise.rk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752051266101-ndh0e1rm74r5128cloaaou874k792le3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcUc9_1zjDgZ59igWAhUyYRanZ-OMzgfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752051266101-ndh0e1rm74r5128cloaaou874k792le3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

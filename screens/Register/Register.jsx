@@ -9,61 +9,49 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import Checkbox_Unselected from "../../assets/Checkbox_Unselected.png";
-import Checkbox_selected from "../../assets/Checkbox_Selected.png";
-import Google_Logo from "../../assets/Google_Logo.png";
-import GenieCart_Logo from "../../assets/GenieCart_Teal.png";
-import selectedRadio from "../../assets/selectedRadioOutlined.png";
-import unSelectedRadio from "../../assets/unSelectedRadioOutlined.png";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import path from "./../../path";
+import { useDispatch } from "react-redux";
+
 import {
   isEmailValid,
   isPasswordValid,
   isMobileValid,
   isUsernameValid,
 } from "../../utils/validation";
+import path from "./../../path";
+import styles from "../../styles/styles";
+import * as Screen from "../../Constants/Types";
 import showToast from "./../../components/Toast/Toast";
+import Google_Logo from "../../assets/Google_Logo.png";
+import GenieCart_Logo from "../../assets/GenieCart_Teal.png";
+import InputField from "./../../components/InputField/InputField";
+import { sendOTP } from "../../store/extraReducers/AuthReducers";
 
 const Register = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState({ firstName: "", lastName: "" });
   const [username, setUsername] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [conditions, setConditions] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [verifyOTPModel, setVerifyOTPModel] = useState(false);
   const [form, setForm] = useState(null);
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
   let formData = new FormData();
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setShow(false);
-    console.log("Selected Date : ", selectedDate);
-    setDate(currentDate);
-    setDateOfBirth(currentDate.toLocaleDateString());
-  };
+  const dispatch = useDispatch();
 
   const handleOnSubmit = async () => {
     setLoading(true);
     try {
       if (
-        firstName.trim().length >= 3 &&
-        lastName.trim().length >= 3 &&
+        name.firstName.trim().length >= 3 &&
+        name.lastName.trim().length >= 3 &&
         isPasswordValid(password) &&
         password === confirmPassword &&
         isUsernameValid(username) &&
         isMobileValid(mobile) &&
         isEmailValid(email) &&
-        dateOfBirth &&
+        date &&
         gender &&
         conditions
       ) {
@@ -85,13 +73,12 @@ const Register = ({ navigation }) => {
         if (response.data) {
           setLoading(false);
           showToast("OTP has been sent to your mail successfully.");
-          navigation.navigate("VerifyOTP");
-          // setVerifyOTPModel(true);
+          navigation.navigate(Screen.verification);
           return;
         }
       } else {
-        if (!firstName.trim()) showToast("Please enter first name.");
-        else if (!lastName.trim()) showToast("Please enter last name.");
+        if (!name.firstName.trim()) showToast("Please enter first name.");
+        else if (!name.lastName.trim()) showToast("Please enter last name.");
         else if (!username.trim()) showToast("Please enter username.");
         else if (!isUsernameValid(username))
           showToast("Please enter valid username.");
@@ -125,203 +112,71 @@ const Register = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-1 px-4 flex justify-center mt-12">
+    <View className="flex-1 px-4 flex mt-12">
       <ScrollView
-        // className="flex justify-center items-center py-5"
-        // style={{ gap: 10 }}
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingVertical: 5,
-          gap: 10,
-        }}
+        contentContainerStyle={styles.scroll_container}
       >
         <Image
           source={GenieCart_Logo}
           resizeMode="contain"
-          style={{ height: 35 }}
-          className="py-2 mb-3"
+          className="py-2 mb-3 h-[32]"
         />
-        <View className="flex w-[100%] px-2" style={{ gap: 15 }}>
-          <View className="flex flex-row w-full justify-between">
-            <TextInput
-              placeholder="First Name"
-              value={firstName}
-              onChangeText={(e) => setFirstName(e)}
-              className="border border-[#349b7e] rounded-md px-4 py-2 w-[48%]"
-              style={{ fontFamily: "Montserrat_Medium" }}
-            />
-            <TextInput
-              placeholder="Last Name"
-              value={lastName}
-              onChangeText={(e) => setLastName(e)}
-              className="border border-[#349b7e] rounded-md px-4 py-2 w-[48%]"
-              style={{ fontFamily: "Montserrat_Medium" }}
-            />
-          </View>
-          <TextInput
+        <View className="flex w-[100%] px-2 " style={styles.input_gap}>
+          <InputField type="name" state={name} setState={setName} />
+          <InputField
             placeholder="Username"
-            value={username}
-            onChangeText={(e) => setUsername(e)}
-            className="border border-[#349b7e] rounded-md px-4 py-2"
-            style={{ fontFamily: "Montserrat_Medium" }}
+            state={username}
+            setState={setUsername}
           />
-          <TextInput
+          <InputField
             placeholder="Email Address"
-            value={email}
-            onChangeText={(e) => setEmail(e)}
-            className="border border-[#349b7e] rounded-md px-4 py-2"
-            style={{ fontFamily: "Montserrat_Medium" }}
+            state={email}
+            setState={setEmail}
           />
-          <TextInput
+          <InputField
             placeholder="Mobile Number"
-            value={mobile}
-            onChangeText={(e) => setMobile(e)}
-            className="border border-[#349b7e] rounded-md px-4 py-2"
-            style={{ fontFamily: "Montserrat_Medium" }}
+            state={mobile}
+            setState={setMobile}
           />
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => setShow(true)}
-            className="border border-[#349b7e] rounded-md px-4 py-3"
-          >
-            <Text
-              style={{ fontFamily: "Montserrat_Medium" }}
-              className="text-gray-400"
-            >
-              {dateOfBirth ? dateOfBirth : "Date of Birth"}
-            </Text>
-          </TouchableOpacity>
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={"date"}
-              is24Hour={true}
-              onChange={onChange}
-            />
-          )}
-          <View className="border border-[#349b7e] rounded-md px-4 py-3 flex flex-row justify-between">
-            <TouchableOpacity
-              className="flex flex-row space-x-2 items-center"
-              onPress={() => setGender("male")}
-              activeOpacity={0.5}
-            >
-              <Image
-                source={gender === "male" ? selectedRadio : unSelectedRadio}
-                resizeMode="contain"
-                style={{ height: 15, width: "auto", aspectRatio: 1 }}
-              />
-              <Text
-                style={{ fontFamily: "Montserrat_Medium" }}
-                className="text-[#9b9a9a]"
-              >
-                Male
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex flex-row space-x-2 items-center"
-              onPress={() => setGender("female")}
-              activeOpacity={0.5}
-            >
-              <Image
-                source={gender === "female" ? selectedRadio : unSelectedRadio}
-                resizeMode="contain"
-                style={{ height: 15, width: "auto", aspectRatio: 1 }}
-              />
-              <Text
-                style={{ fontFamily: "Montserrat_Medium" }}
-                className="text-[#9b9a9a]"
-              >
-                Female
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex flex-row space-x-2 items-center"
-              onPress={() => setGender("other")}
-              activeOpacity={0.5}
-            >
-              <Image
-                source={gender === "other" ? selectedRadio : unSelectedRadio}
-                resizeMode="contain"
-                style={{ height: 15, width: "auto", aspectRatio: 1 }}
-              />
-              <Text
-                style={{ fontFamily: "Montserrat_Medium" }}
-                className="text-[#9b9a9a]"
-              >
-                Other
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={(e) => setPassword(e)}
-            className="border border-[#348b7e] rounded-md px-4 py-2"
-            style={{ fontFamily: "Montserrat_Medium" }}
+          <InputField type="date" state={date} setState={setDate} />
+          <InputField type="gender" state={gender} setState={setGender} />
+          <InputField
+            type="password"
+            placeholder={"Password"}
+            state={password}
+            setState={setPassword}
           />
-          <TextInput
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChangeText={(e) => setConfirmPassword(e)}
-            className="border border-[#348b7e] rounded-md px-4 py-2"
-            style={{ fontFamily: "Montserrat_Medium" }}
+          <InputField
+            placeholder={"Confirm Password"}
+            state={confirmPassword}
+            setState={setConfirmPassword}
+            secureTextEntry={true}
           />
         </View>
-        <TouchableOpacity
-          onPress={() => setConditions(!conditions)}
-          activeOpacity={0.5}
-          className="flex flex-row items-center w-[95%] space-x-3 px-1 py-2"
-        >
-          <Image
-            source={conditions ? Checkbox_selected : Checkbox_Unselected}
-            resizeMode="contain"
-            style={{ height: 15, width: 15 }}
+        <View className="w-full px-2">
+          <InputField
+            type="checkbox"
+            state={conditions}
+            setState={setConditions}
           />
-          <View className="flex flex-row">
-            <Text style={{ fontFamily: "Montserrat_Medium" }}>
-              I agree with{" "}
-            </Text>
-            <TouchableOpacity activeOpacity={0.5}>
-              <Text
-                style={{ fontFamily: "Montserrat_Medium" }}
-                className="text-[#348b7e]"
-              >
-                Terms and Conditions.
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="flex justify-center items-center bg-[#349b7e] rounded w-[95%]"
-          activeOpacity={0.8}
-          disabled={loading}
-          style={{ elevation: 2, paddingVertical: 10 }}
-        >
-          {loading ? (
-            <ActivityIndicator color={"white"} size={20} />
-          ) : (
-            <Text
-              className="text-white"
-              style={{ fontFamily: "Montserrat_Medium" }}
-            >
-              Register
-            </Text>
-          )}
-        </TouchableOpacity>
+        </View>
+        <View className="px-2 w-full">
+          <InputField
+            type="button"
+            placeholder="Register"
+            className="w-full"
+            onPress={() => dispatch(sendOTP(email))}
+          />
+        </View>
+
         <View className="flex flex-row pt-2">
-          <Text style={{ fontFamily: "Montserrat_Medium" }}>
+          <Text style={styles.montserrat_medium}>
             Already have an Account ?{" "}
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text
-              className="text-[#349b7e]"
-              style={{ fontFamily: "Montserrat_Medium" }}
-            >
+          <TouchableOpacity onPress={() => navigation.navigate(Screen.login)}>
+            <Text className="text-[#349b7e]" style={styles.montserrat_medium}>
               Login Now.
             </Text>
           </TouchableOpacity>
@@ -329,7 +184,7 @@ const Register = ({ navigation }) => {
         <View className="border-b w-[85%] border-gray-300 my-2"></View>
         <TouchableOpacity
           className="flex flex-row items-center justify-between space-x-2 w-[95%] bg-[#349b7e] py-2 pl-5 rounded"
-          style={{ elevation: 2 }}
+          style={styles.button_shadow}
           activeOpacity={0.8}
         >
           <Image
@@ -337,10 +192,7 @@ const Register = ({ navigation }) => {
             resizeMode="contain"
             style={{ height: 25, width: "auto", aspectRatio: 1 }}
           />
-          <Text
-            className="text-white pr-7"
-            style={{ fontFamily: "Montserrat_Medium" }}
-          >
+          <Text className="text-white pr-7" style={styles.montserrat_medium}>
             Register with Google
           </Text>
           <View></View>
@@ -351,5 +203,3 @@ const Register = ({ navigation }) => {
 };
 
 export default Register;
-
-const styles = StyleSheet.create({});

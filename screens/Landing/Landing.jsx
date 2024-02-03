@@ -15,12 +15,23 @@ import * as Font from "expo-font";
 import LandingImage from "../../assets/bag.png";
 import Logo from "../../assets/GenieCart_Teal.png";
 import React, { useEffect, useRef, useState } from "react";
+import * as Screen from "../../Constants/Types";
+import * as Linking from "expo-linking";
+const prefix = Linking.createURL("/");
 
 const Landing = ({ navigation, route }) => {
   const win = Dimensions.get("window");
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [isTop, setIsTop] = useState(true);
   const [fontLoaded, setFontLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      console.log("Focused...");
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // const startAnimation = (toValue) => {
   //   Animated.timing(animatedValue, {
@@ -71,7 +82,7 @@ const Landing = ({ navigation, route }) => {
         <View className="flex flex-row justify-center gap-3">
           <TouchableOpacity
             style={styles.shadow}
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate(Screen.login)}
             className="flex justify-center items-center bg-[#349b7e] w-[80] py-2 rounded-md"
           >
             <Text
@@ -83,7 +94,7 @@ const Landing = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={{ borderWidth: 1 }}
-            onPress={() => navigation.navigate("Register")}
+            onPress={() => navigation.navigate(Screen.register)}
             className="flex justify-center items-center border-[#349b7e] w-[80] py-2 rounded-md"
           >
             <Text
@@ -105,7 +116,7 @@ const Landing = ({ navigation, route }) => {
           style={{
             width: win.width,
             height: "auto",
-            aspectRatio: 1.5 / 1,
+            aspectRatio: 1.3,
           }}
         />
       </Animated.View>
@@ -154,7 +165,7 @@ const Landing = ({ navigation, route }) => {
         <View className="flex flex-row py-3" style={{ gap: 15 }}>
           <TouchableOpacity
             style={styles.shadow}
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate(Screen.login)}
             className="flex justify-center items-center bg-[#349b7e] w-[120] py-2 rounded-md"
           >
             <Text

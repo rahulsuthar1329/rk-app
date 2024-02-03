@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "rk",
+    "scheme": "https",
     "slug": "rk",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +21,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rk1329.rk"
+      "package": "com.rk1329.rk",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.rkenterprisy.com"
+            }
+          ],
+          "category": ["LAUNCHER", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +43,14 @@
       "eas": {
         "projectId": "c361985b-af7c-4c57-9716-f917950f09e4"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow GenieCart to access your microphone."
+        }
+      ]
+    ]
   }
 }
